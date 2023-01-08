@@ -15,6 +15,7 @@
  */
 package com.detroitauctionshippers.config;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -51,6 +52,8 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * @author Joe Grandja
@@ -62,6 +65,19 @@ public class AuthorizationServerConfig {
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+		  http.cors(c -> {
+		      CorsConfigurationSource source = s -> {
+		        CorsConfiguration cc = new CorsConfiguration();
+		        cc.setAllowCredentials(true);
+		        cc.setAllowedOrigins(List.of("http://127.0.0.1:3000"));
+		        cc.setAllowedHeaders(List.of("*"));
+		        cc.setAllowedMethods(List.of("*"));
+		        return cc;
+		      };
+
+		      c.configurationSource(source);
+		    });
+		  
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 				.oidc(Customizer.withDefaults());	// Enable OpenID Connect 1.0
@@ -86,13 +102,14 @@ public class AuthorizationServerConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
-				.redirectUri("http://127.0.0.1:8080/authorized")
+				.redirectUri("http://127.0.0.1:3000/login/oauth2/code/messaging-client-oidc")
+				.redirectUri("http://127.0.0.1:3000/authorized")
+				.redirectUri("http://127.0.0.1:3000/home")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
 				.scope("message.read")
 				.scope("message.write")
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
 				.build();
 
 		// Save registered client in db as if in-memory

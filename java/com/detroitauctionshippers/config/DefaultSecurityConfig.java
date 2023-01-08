@@ -24,8 +24,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import java.util.List;
 
 /**
  * @author Joe Grandja
@@ -38,6 +42,18 @@ public class DefaultSecurityConfig {
 	// @formatter:off
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+		  http.cors(c -> {
+		      CorsConfigurationSource source = s -> {
+		        CorsConfiguration cc = new CorsConfiguration();
+		        cc.setAllowCredentials(true);
+		        cc.setAllowedOrigins(List.of("http://127.0.0.1:3000"));
+		        cc.setAllowedHeaders(List.of("*"));
+		        cc.setAllowedMethods(List.of("*"));
+		        return cc;
+		      };
+
+		      c.configurationSource(source);
+		    });
 		http
 			.authorizeHttpRequests(authorize ->
 				authorize.anyRequest().authenticated()
