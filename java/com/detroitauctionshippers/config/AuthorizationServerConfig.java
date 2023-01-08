@@ -56,7 +56,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
- * @author Joe Grandja
+ * @author Nikhil
  * @since 0.0.1
  */
 @Configuration(proxyBeanMethods = false)
@@ -95,27 +95,27 @@ public class AuthorizationServerConfig {
 	// @formatter:off
 	@Bean
 	public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
-		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-				.clientId("messaging-client")
-				.clientSecret("{noop}secret")
-				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.redirectUri("http://127.0.0.1:3000/login/oauth2/code/messaging-client-oidc")
-				.redirectUri("http://127.0.0.1:3000/authorized")
-				.redirectUri("http://127.0.0.1:3000/home")
-				.scope(OidcScopes.OPENID)
-				.scope(OidcScopes.PROFILE)
-				.scope("message.read")
-				.scope("message.write")
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
-				.build();
-
-		// Save registered client in db as if in-memory
+//		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//				.clientId("messaging-client")
+//				.clientSecret("{noop}secret")
+//				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//				.redirectUri("http://127.0.0.1:3000/login/oauth2/code/messaging-client-oidc")
+//				.redirectUri("http://127.0.0.1:3000/authorized")
+//				.redirectUri("http://127.0.0.1:3000/home")
+//				.scope(OidcScopes.OPENID)
+//				.scope(OidcScopes.PROFILE)
+//				.scope("message.read")
+//				.scope("message.write")
+//				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+//				.build();
+//
+//		// Save registered client in db as if in-memory
+//		JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
+//		registeredClientRepository.save(registeredClient);
 		JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
-		registeredClientRepository.save(registeredClient);
-
 		return registeredClientRepository;
 	}
 	// @formatter:on
@@ -147,18 +147,18 @@ public class AuthorizationServerConfig {
 		return AuthorizationServerSettings.builder().build();
 	}
 
-	@Bean
-	public EmbeddedDatabase embeddedDatabase() {
-		// @formatter:off
-		return new EmbeddedDatabaseBuilder()
-				.generateUniqueName(true)
-				.setType(EmbeddedDatabaseType.H2)
-				.setScriptEncoding("UTF-8")
-				.addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql")
-				.addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-consent-schema.sql")
-				.addScript("org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql")
-				.build();
-		// @formatter:on
-	}
+//	@Bean
+//	public EmbeddedDatabase embeddedDatabase() {
+//		// @formatter:off
+//		return new EmbeddedDatabaseBuilder()
+//				.generateUniqueName(true)
+//				.setType(EmbeddedDatabaseType.H2)
+//				.setScriptEncoding("UTF-8")
+//				.addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql")
+//				.addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-consent-schema.sql")
+//				.addScript("org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql")
+//				.build();
+//		// @formatter:on
+//	}
 
 }

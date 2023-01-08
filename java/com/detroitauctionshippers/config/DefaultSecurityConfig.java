@@ -32,7 +32,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import java.util.List;
 
 /**
- * @author Joe Grandja
+ * @author Nikhil
  * @since 0.1.0
  */
 @EnableWebSecurity

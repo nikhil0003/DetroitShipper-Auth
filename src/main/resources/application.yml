@@ -9,3 +9,12 @@ logging:
     org.springframework.security.oauth2: INFO
 #    org.springframework.boot.autoconfigure: DEBUG
 
+spring:
+  datasource:
+    url : jdbc:mysql://localhost:3306/detroitauctionshippers
+    username: admin    
+    password: admin
+  jpa :
+    hibernate:
+      ddl-auto: create
+      
