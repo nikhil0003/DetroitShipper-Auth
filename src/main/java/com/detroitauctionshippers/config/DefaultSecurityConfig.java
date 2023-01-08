@@ -15,31 +15,52 @@
  */
 package com.detroitauctionshippers.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.detroitauctionshippers.utils.SecurityUtility;
+import com.detroitauctionshippers.utils.UserSecurityService;
+
 /**
- * @author Joe Grandja
+ * @author Nikhil
  * @since 0.1.0
  */
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
 
-	// @formatter:off
+	@Autowired
+	private UserSecurityService userSecurityService;
+
+	private BCryptPasswordEncoder passwordEncoder() {
+		return SecurityUtility.passwordEncoder();
+	}
+
+	private static final String[] PUBLIC_MATCHERS = {
+			"/css/**",
+			"/js/**",
+			"/image/**",
+			"/newUser",
+			"/forgetPassword",
+			"/login",
+			"/fonts/**"
+			
+	};
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		 http.cors(c -> {
@@ -54,25 +75,30 @@ public class DefaultSecurityConfig {
 
 		      c.configurationSource(source);
 		    });
+	
 		http
 			.authorizeHttpRequests(authorize ->
 				authorize.anyRequest().authenticated()
 			)
 			.formLogin(withDefaults());
+		
 		return http.build();
 	}
-	// @formatter:on
+	
+	
+	 @Bean
+	  public AuthenticationProvider authenticationProvider() {
+	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+	    authProvider.setUserDetailsService(userSecurityService);
+	    authProvider.setPasswordEncoder(passwordEncoder());
+	    return authProvider;
+	  }
 
-	// @formatter:off
-	@Bean
-	UserDetailsService users() {
-		UserDetails user = User.withDefaultPasswordEncoder()
-				.username("user1")
-				.password("password")
-				.roles("USER")
-				.build();
-		return new InMemoryUserDetailsManager(user);
-	}
-	// @formatter:on
+	  @Bean
+	  public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+	    return config.getAuthenticationManager();
+	  }
+
+	
 
 }
