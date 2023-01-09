@@ -47,6 +47,9 @@ public class DefaultSecurityConfig {
 
 	@Autowired
 	private UserSecurityService userSecurityService;
+	
+	@Autowired
+	private CORSCustomizer cr;
 
 	private BCryptPasswordEncoder passwordEncoder() {
 		return SecurityUtility.passwordEncoder();
@@ -58,24 +61,12 @@ public class DefaultSecurityConfig {
 			"/image/**",
 			"/newUser",
 			"/forgetPassword",
-			"/login",
 			"/fonts/**"
 			
 	};
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-		 http.cors(c -> {
-		      CorsConfigurationSource source = s -> {
-		        CorsConfiguration cc = new CorsConfiguration();
-		        cc.setAllowCredentials(true);
-		        cc.setAllowedOrigins(List.of("http://127.0.0.1:3000"));
-		        cc.setAllowedHeaders(List.of("*"));
-		        cc.setAllowedMethods(List.of("*"));
-		        return cc;
-		      };
-
-		      c.configurationSource(source);
-		    });
+		cr.corsCustomizer(http);
 		 http.authorizeHttpRequests(authorize ->
 				authorize.anyRequest().authenticated()
 			)

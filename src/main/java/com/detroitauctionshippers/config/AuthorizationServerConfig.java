@@ -18,6 +18,7 @@ package com.detroitauctionshippers.config;
 import java.lang.reflect.Member;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -60,6 +61,9 @@ import com.nimbusds.jose.proc.SecurityContext;
  */
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
+	
+	@Autowired
+	private CORSCustomizer cr;
 
 
 	@Bean
@@ -69,20 +73,7 @@ public class AuthorizationServerConfig {
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 				.oidc(Customizer.withDefaults());	// Enable OpenID Connect 1.0
 		
-		 http.cors(c -> {
-		      CorsConfigurationSource source = s -> {
-		        CorsConfiguration cc = new CorsConfiguration();
-		        cc.setAllowCredentials(true);
-		        cc.setAllowedOrigins(List.of("http://127.0.0.1:3000"));
-		        cc.setAllowedHeaders(List.of("*"));
-		        cc.setAllowedMethods(List.of("*"));
-		        return cc;
-		      };
-
-		      c.configurationSource(source);
-		    });
-
-	
+		cr.corsCustomizer(http);
 		http
 			.exceptionHandling(exceptions ->
 				exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
