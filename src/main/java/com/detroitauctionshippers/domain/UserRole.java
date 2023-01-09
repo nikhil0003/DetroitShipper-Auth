@@ -19,7 +19,7 @@ public class UserRole {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="user_id")
-	private User user;
+	private AppUser user;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="role_id")
@@ -27,7 +27,7 @@ public class UserRole {
 	
 	public UserRole(){}
 	
-	public UserRole(User user, Role role) {
+	public UserRole(AppUser user, Role role) {
 		this.user = user;
 		this.role = role;
 	}
@@ -43,12 +43,12 @@ public class UserRole {
 	}
 
 
-	public User getUser() {
+	public AppUser getUser() {
 		return user;
 	}
 
 
-	public void setUser(User user) {
+	public void setUser(AppUser user) {
 		this.user = user;
 	}
 

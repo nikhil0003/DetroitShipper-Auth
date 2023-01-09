@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.detroitauctionshippers.domain.User;
+import com.detroitauctionshippers.domain.AppUser;
 import com.detroitauctionshippers.repository.UserRepository;
 
 @Service
@@ -17,7 +17,7 @@ public class UserSecurityService implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+		AppUser user = userRepository.findByUsername(username);
 		
 		if(null == user) {
 			throw new UsernameNotFoundException("Username not found");

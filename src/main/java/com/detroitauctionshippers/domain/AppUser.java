@@ -19,7 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class User implements UserDetails{
+public class AppUser implements UserDetails{
 	
 	/**
 	 * 

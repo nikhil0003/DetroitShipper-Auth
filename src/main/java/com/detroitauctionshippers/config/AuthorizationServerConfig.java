@@ -15,8 +15,8 @@
  */
 package com.detroitauctionshippers.config;
 
+import java.lang.reflect.Member;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,28 +26,29 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.detroitauctionshippers.domain.AppUser;
+import com.detroitauctionshippers.domain.Authority;
 import com.detroitauctionshippers.jose.Jwks;
-import com.detroitauctionshippers.utils.SecurityUtility;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -121,10 +122,10 @@ public class AuthorizationServerConfig {
 	}
 	// @formatter:on
 
-	@Bean
-	public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
-		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
-	}
+//	@Bean
+//	public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
+//		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+//	}
 
 	@Bean
 	public OAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
@@ -147,4 +148,48 @@ public class AuthorizationServerConfig {
 	public AuthorizationServerSettings authorizationServerSettings() {
 		return AuthorizationServerSettings.builder().build();
 	}
+	
+	 @Bean
+	   public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
+	      JdbcOAuth2AuthorizationService jdbcOAuth2AuthorizationService = new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+	      jdbcOAuth2AuthorizationService.setAuthorizationRowMapper(new RowMapper(registeredClientRepository));
+	      return jdbcOAuth2AuthorizationService;
+	   }
+	   
+	   static class RowMapper extends JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper {
+	      RowMapper(RegisteredClientRepository registeredClientRepository) {
+	         super(registeredClientRepository);
+	         getObjectMapper().addMixIn(AppUser.class, AppUserMixin.class);
+	         getObjectMapper().addMixIn(Authority.class, AuthorityMixin.class);
+
+	      }
+	   }
+	   
+	    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+	    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
+	          isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+	    @JsonIgnoreProperties(ignoreUnknown = true)
+	    static class AppUserMixin {
+
+	       @JsonCreator
+	       public AppUserMixin(@JsonProperty("id") Long id, @JsonProperty("username") String user, @JsonProperty("password") String password) {
+	       }
+	       
+	       
+
+	    }
+	    
+	    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+	    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
+	          isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+	    @JsonIgnoreProperties(ignoreUnknown = true)
+	    static class AuthorityMixin {
+
+	       @JsonCreator
+	       public AuthorityMixin(@JsonProperty("authority") String authority) {
+	       }
+	       
+	       
+
+	    }
 }

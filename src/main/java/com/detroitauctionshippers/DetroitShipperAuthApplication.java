@@ -9,7 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.detroitauctionshippers.domain.Role;
-import com.detroitauctionshippers.domain.User;
+import com.detroitauctionshippers.domain.AppUser;
 import com.detroitauctionshippers.domain.UserRole;
 import com.detroitauctionshippers.service.UserService;
 import com.detroitauctionshippers.utils.SecurityUtility;
@@ -26,7 +26,7 @@ public class DetroitShipperAuthApplication implements CommandLineRunner{
 	
 	@Override
 	public void run(String... args) throws Exception {
-		User user1 = new User();
+		AppUser user1 = new AppUser();
 		user1.setUsername("admin");
 		user1.setPassword(SecurityUtility.passwordEncoder().encode("admin"));
 		user1.setEmail("admin@gmail.com");

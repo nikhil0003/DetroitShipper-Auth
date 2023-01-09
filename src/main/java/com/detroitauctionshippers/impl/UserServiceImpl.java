@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.detroitauctionshippers.domain.User;
+import com.detroitauctionshippers.domain.AppUser;
 import com.detroitauctionshippers.domain.UserRole;
 import com.detroitauctionshippers.repository.RoleRepository;
 import com.detroitauctionshippers.repository.UserRepository;
@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
 	private RoleRepository roleRepository;
 
 	@Override
-	public User createUser(User user, Set<UserRole> userRoles) {
-		User localUser = userRepository.findByUsername(user.getUsername());
+	public AppUser createUser(AppUser user, Set<UserRole> userRoles) {
+		AppUser localUser = userRepository.findByUsername(user.getUsername());
 
 		if (localUser != null) {
 			LOG.info("user {} already exists. Nothing will be done.", user.getUsername());
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User save(User user) {
+	public AppUser save(AppUser user) {
 		return userRepository.save(user);
 	}
 
