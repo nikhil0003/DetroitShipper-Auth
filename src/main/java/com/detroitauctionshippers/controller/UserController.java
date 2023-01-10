@@ -1,14 +1,18 @@
-//package com.detroitauctionshippers.controller;
-//
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//public class UserController {
-//	
-//	@GetMapping(value = "/newUser")
-//	public String hello() {
-//		return "newUserww";
+package com.detroitauctionshippers.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class UserController {
+	
+	@GetMapping("/login")
+	public String login() {
+		return "login";
+	}
+
+//	@PostMapping("/login")
+//	public String loginFailed() {
+//		return "redirect:/authenticate?error=invalid username or password";
 //	}
-//
-//}
+}

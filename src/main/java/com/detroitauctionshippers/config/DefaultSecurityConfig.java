@@ -15,10 +15,6 @@
  */
 package com.detroitauctionshippers.config;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +27,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.detroitauctionshippers.utils.SecurityUtility;
 import com.detroitauctionshippers.utils.UserSecurityService;
@@ -56,9 +50,9 @@ public class DefaultSecurityConfig {
 	}
 
 	private static final String[] PUBLIC_MATCHERS = {
-			"/css/**",
+			"/css/style.css",
 			"/js/**",
-			"/image/**",
+			"/image/img_avatar2.png",
 			"/newUser",
 			"/forgetPassword",
 			"/fonts/**"
@@ -70,7 +64,7 @@ public class DefaultSecurityConfig {
 		 http.authorizeHttpRequests(authorize ->
 				authorize.anyRequest().authenticated()
 			)
-			.formLogin(withDefaults());
+			.formLogin().loginPage("/login").permitAll();
 		
 		return http.build();
 	}
