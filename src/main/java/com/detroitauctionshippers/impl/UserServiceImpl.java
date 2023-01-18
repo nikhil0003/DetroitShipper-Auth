@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.detroitauctionshippers.domain.AppUser;
+import com.detroitauctionshippers.domain.PasswordResetToken;
 import com.detroitauctionshippers.domain.UserRole;
+import com.detroitauctionshippers.repository.PasswordResetTokenRepository;
 import com.detroitauctionshippers.repository.RoleRepository;
 import com.detroitauctionshippers.repository.UserRepository;
 import com.detroitauctionshippers.service.UserService;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
 
 	@Override
 	public AppUser createUser(AppUser user, Set<UserRole> userRoles) {
@@ -47,5 +52,27 @@ public class UserServiceImpl implements UserService {
 	public AppUser save(AppUser user) {
 		return userRepository.save(user);
 	}
+
+	@Override
+	public AppUser findByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	@Override
+	public AppUser findByEmail(String userEmail) {
+		return userRepository.findByEmail(userEmail);
+	}
+
+	@Override
+	public PasswordResetToken getPasswordResetToken(String token) {
+		return passwordResetTokenRepository.findByToken(token);
+	}
+
+	@Override
+	public void createPasswordResetTokenForUser(AppUser user, String token) {
+		final PasswordResetToken myToken = new PasswordResetToken(token, user);
+		passwordResetTokenRepository.save(myToken);
+	}
+
 
 }

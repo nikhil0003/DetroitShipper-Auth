@@ -50,19 +50,16 @@ public class DefaultSecurityConfig {
 	}
 
 	private static final String[] PUBLIC_MATCHERS = {
-			"/css/style.css",
-			"/js/**",
-			"/image/img_avatar2.png",
-			"/newUser",
+			"/createAccount",
 			"/forgetPassword",
-			"/fonts/**"
-			
+			"/newUser",
+			"/badRequest"
 	};
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		cr.corsCustomizer(http);
 		 http.authorizeHttpRequests(authorize ->
-				authorize.anyRequest().authenticated()
+				authorize.anyRequest().authenticated().and()
 			)
 			.formLogin().loginPage("/login").permitAll();
 		

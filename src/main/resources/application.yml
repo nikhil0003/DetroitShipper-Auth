@@ -18,3 +18,17 @@ spring:
     hibernate:
       ddl-auto: create
       
+  mail:
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+            port: '587'
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: 'true'
+          auth: 'true'
+          starttls : 
+            enable : 'true'
+    host: smtp.office365.com
+    username: arenelliyadagiri@outlook.com
+    password: Lkjhg@9989
